@@ -1,59 +1,25 @@
 import ContactForm from './ContactForm';
 import ContactList from './ContactList';
 import Filter from './Filter';
-import React, { useState } from 'react';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { getAllContacts } from 'redux/selectors';
+import { setContacts } from 'redux/actions';
 
 export const App = () => {
-  const [contacts, setContacts] = useState([
-    { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
-    { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
-    { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
-    { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
-  ]);
-  const [filter, setFilter] = useState('');
-
-  const addContact = (id, name, number) => {
-    // map jest by zrobić tablicę name'ów a bez map byłaby tablica obiektów (obiekt zawiera id, name...)
-    if (contacts.map(contact => contact.name).includes(name)) {
-      // alert to funkcja!!!
-      alert(`${name} is already in contacts.`);
-    } else {
-      setContacts(prevState => [
-        ...prevState,
-        {
-          id: id,
-          name: name,
-          number: number,
-        },
-      ]);
-    }
-  };
-
-  const deleteContact = id => {
-    setContacts(prevState => {
-      const updatedContacts = [...prevState];
-      // zwraca nam numer w tablicy elementu id
-      const index = updatedContacts.map(contact => contact.id).indexOf(id);
-      updatedContacts.splice(index, 1);
-      return updatedContacts;
-    });
-  };
-
-  const handleFilterChange = event => {
-    setFilter(event.target.value);
-  };
-
+  const dispatch = useDispatch();
   // componentDidMount
   useEffect(() => {
     const contactsJSON = localStorage.getItem('contacts');
 
     if (contactsJSON) {
-      setContacts(JSON.parse(contactsJSON));
+      dispatch(setContacts(JSON.parse(contactsJSON)));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   //componentDidUpdate dla contacts
+  const contacts = useSelector(getAllContacts);
   useEffect(() => {
     localStorage.setItem('contacts', JSON.stringify(contacts));
   }, [contacts]);
@@ -72,15 +38,11 @@ export const App = () => {
       }}
     >
       <h1>Phonebook</h1>
-      <ContactForm addContact={addContact} />
+      <ContactForm />
 
       <h2>Contacts</h2>
-      <Filter filter={filter} setFilter={handleFilterChange} />
-      <ContactList
-        contacts={contacts}
-        filter={filter}
-        deleteContact={deleteContact}
-      />
+      <Filter />
+      <ContactList />
     </div>
   );
 };

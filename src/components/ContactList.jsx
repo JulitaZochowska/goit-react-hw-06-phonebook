@@ -1,23 +1,22 @@
-import PropTypes from 'prop-types';
 import css from './ContactList.module.css';
+import { useSelector } from 'react-redux/es/hooks/useSelector';
+import { deleteContact } from '../redux/actions';
+import { useDispatch } from 'react-redux';
+import { getFilteredContacts } from 'redux/selectors';
 
-export const ContactList = ({ filter, contacts, deleteContact }) => {
-  const filterContacts = contacts =>
-    contacts.filter(contact =>
-      contact.name.toLowerCase().includes(filter.toLowerCase())
-    );
+export const ContactList = () => {
+  const dispatch = useDispatch();
 
+  const contacts = useSelector(getFilteredContacts);
   return (
     <ul>
-      {/* filtruje wszystko co przychodzi z API, to co przychodzi z API jest w nawiasie */}
-      {/* (this.props.contact)to to, co przychodzi z API */}
-      {filterContacts(contacts).map(contact => (
+      {contacts.map(contact => (
         <li className={css.contact} key={contact.id}>
           {contact.name}: {contact.number}&nbsp;
           <button
             className={css.button}
             onClick={() => {
-              deleteContact(contact.id);
+              dispatch(deleteContact(contact.id));
             }}
           >
             Delete
@@ -26,18 +25,6 @@ export const ContactList = ({ filter, contacts, deleteContact }) => {
       ))}
     </ul>
   );
-};
-
-ContactList.propTypes = {
-  filter: PropTypes.string,
-  deleteContact: PropTypes.func,
-  contacts: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string,
-      name: PropTypes.string,
-      number: PropTypes.string,
-    })
-  ),
 };
 
 export default ContactList;
