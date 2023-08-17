@@ -1,4 +1,5 @@
-import { combineReducers } from 'redux';
+import { createReducer } from '@reduxjs/toolkit';
+import { addContact, deleteContact, setContacts, setFilter } from './actions';
 
 const contactsInitial = [
   { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
@@ -7,38 +8,33 @@ const contactsInitial = [
   { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
 ];
 
-const contactsReducer = (state = contactsInitial, action) => {
-  switch (action.type) {
-    case 'contacts/ADD':
-      console.log(state);
-      if (state.map(contact => contact.name).includes(action.payload.name)) {
-        // alert to funkcja!!!
-        alert(`${action.payload.name} is already in contacts.`);
-        return state;
-      } else {
-        return [...state, action.payload];
-      }
-    case 'contacts/DELETE':
-      return state.filter(contact => contact.id !== action.payload);
-    case 'contacts/SET':
-      return action.payload;
-    default:
+export const contactsReducer = createReducer(contactsInitial, {
+  [addContact]: (state, action) => {
+    if (state.map(contact => contact.name).includes(action.payload.name)) {
+      // alert to funkcja!!!
+      alert(`${action.payload.name} is already in contacts.`);
       return state;
-  }
-};
-
-const filtersInitial = '';
-const filtersReducer = (state = filtersInitial, action) => {
-  switch (action.type) {
-    case 'filters/SET':
-      return action.payload;
-    default:
-      return state;
-  }
-};
-
-//robimy sobie taki initial state
-export const rootReducer = combineReducers({
-  contacts: contactsReducer,
-  filter: filtersReducer,
+    } else {
+      return [...state, action.payload];
+    }
+  },
+  [deleteContact]: (state, action) => {
+    return state.filter(contact => contact.id !== action.payload);
+  },
+  [setContacts]: (state, action) => {
+    return action.payload;
+  },
 });
+
+const filterInitial = '';
+export const filterReducer = createReducer(filterInitial, {
+  //setFilter-nazwa akcji
+  [setFilter]: (state, action) => {
+    return action.payload;
+  },
+});
+
+// export const rootReducer = combineReducers({
+//   contacts: contactsReducer,
+//   filter: filtersReducer,
+// });

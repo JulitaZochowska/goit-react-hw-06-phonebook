@@ -1,17 +1,11 @@
-import { nanoid } from 'nanoid';
+import { createAction, nanoid } from '@reduxjs/toolkit';
 
-export const addContact = (name, number) => {
-  return { type: 'contacts/ADD', payload: { id: nanoid(), name, number } };
-};
+export const addContact = createAction('contacts/ADD', (name, number) => {
+  return { payload: { id: nanoid(), name, number } };
+});
 
-export const setContacts = contacts => {
-  return { type: 'contacts/SET', payload: contacts };
-};
+export const setContacts = createAction('contacts/SET');
 
-export const deleteContact = id => {
-  return { type: 'contacts/DELETE', payload: id };
-};
+export const deleteContact = createAction('contacts/DELETE');
 
-export const setFilter = filter => {
-  return { type: 'filters/SET', payload: filter };
-};
+export const setFilter = createAction('filter/SET');
